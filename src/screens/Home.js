@@ -1,63 +1,68 @@
 import React, { useState } from 'react';
-import { Button, Text, View } from 'react-native';
+import { PermissionsAndroid, Button, Text, View } from 'react-native';
 import Geolocation from 'react-native-geolocation-service';
 
-// Function to get permission for location
-export const requestLocationPermission = async () => {
+async function requestLocationPermission() {
   try {
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       {
-        title: 'Geolocation Permission',
-        message: 'Can we access your location?',
+        title: 'Location Permission',
+        message: 'Our app needs access to your location to provide features.',
         buttonNeutral: 'Ask Me Later',
         buttonNegative: 'Cancel',
         buttonPositive: 'OK',
-      },
+      }
     );
-    console.log('granted', granted);
-    if (granted === 'granted') {
-      console.log('You can use Geolocation');
-      return true;
+    if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      console.log('Location permission granted');
+      return true
     } else {
-      console.log('You cannot use Geolocation');
-      return false;
+      console.log('Location permission denied');
+      return false
     }
   } catch (err) {
-    return false;
+    console.log(err);
+    return false
   }
 };
 
 export const HomeScreen = () => {
-  // state to hold location
+
   const [location, setLocation] = useState(false);
 
-  // function to check permissions and get Location
-  const getLocation = () => {
-    const result = requestLocationPermission();
-    result.then(res => {
-      console.log('res is:', res);
-      if (res) {
-        Geolocation.getCurrentPosition(
-          position => {
-            console.log(position);
-            setLocation(position);
-          },
-          error => {
-            // See error code charts below.
-            console.log(error.code, error.message);
-            setLocation(false);
-          },
-          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-        );
-      }
-    });
-    console.log(location);
-  };
+  const getLocation = async () => {
+    const GpsPerm = await requestLocationPermission();
+    if ( ! GpsPerm) {
+      return false
+    }
+    Geolocation.getCurrentPosition(
+      (position) => {
+        console.log(position)
+        setLocation(position)
+        return true
+      },
+      (error) => {
+        console.log(error)
+        return false
+      },
+      { enableHighAccuracy: true, timeout: 40000, maximumAge: 10000 }
+    )
+  }
+
+  const getAcceleration = async () => {
+
+  }
+
   return (
     <View>
       <Text>Home</Text>
       <Button title="Get Location" onPress={getLocation} />
+        <View>
+          <Text>Latitude: {location ? location.coords.latitude : null}</Text>
+          <Text>Longitude: {location ? location.coords.longitude : null}</Text>
+        </View>
+      <Button title="Get Acceleration" onPress={getAcceleration} />
     </View>
   );
 };

@@ -4,6 +4,6 @@ import { Text } from 'react-native';
 
 export const ProfileScreen = () => {
   return (
-    <Text>Profile</Text>
+    <Text>Profile test test !</Text>
   );
 };

@@ -1,9 +1,11 @@
 import React from 'react';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Tab } from '../App';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { ReportScreen } from './screens/Report';
 import { ProfileScreen } from './screens/Profile';
 import { HomeScreen } from './screens/Home';
+
+export const Tab = createBottomTabNavigator();
 
 export function NavTabs() {
   return (
